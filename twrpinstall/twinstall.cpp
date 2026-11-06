@@ -74,6 +74,7 @@
 #include "gui/blanktimer.hpp"
 #include "twinstall.h"
 #include "installcommand.h"
+#include "xbl_arb.h"
 #include "../twrpRepacker.hpp"
 extern "C" {
 	#include "gui/gui.h"
@@ -1236,6 +1237,13 @@ HighSpeedResult TryHighSpeedAbInstall(const std::string& package, ZipArchiveHand
 	// update_engine never ran, so nothing told the bootloader to switch
 	// slots -- that's the one piece of its job we still have to do
 	// ourselves, and only now that every partition has actually succeeded
+	{
+		std::string arb_reason;
+		if (!XblConfigArbAllowsSwitch(booted_suffix, target_suffix, &arb_reason)) {
+			HsFail("all images written, but not switching to slot " + target_slot + ": " + arb_reason);
+			return HighSpeedResult::kAborted;
+		}
+	}
 	PartitionManager.Set_Active_Slot(target_slot);
 	if (PartitionManager.Get_Active_Slot_Display() != target_slot) {
 		HsFail("all images written, but switching to slot " + target_slot + " failed");

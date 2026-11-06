@@ -79,6 +79,7 @@ cc_library_static {
         "tw_atomic.cpp",
         "twinstall.cpp",
         "verifier.cpp",
+        "xbl_arb.cpp",
     ],
     shared_libs: [
         "librecovery_ui",
