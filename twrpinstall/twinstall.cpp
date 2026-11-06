@@ -840,7 +840,7 @@ static void RunPreRomFlashScript(const std::string& package) {
 		PartitionManager.UnMount_By_Path(PartitionManager.Get_Android_Root_Path(), false);
 }
 
-void WarnIfHighSpeedDowngrade(ZipArchiveHandle zip) {
+void WarnIfPackageIsOlder(ZipArchiveHandle zip) {
 	std::map<std::string, std::string> metadata;
 	if (!ReadMetadataFromPackage(zip, &metadata))
 		return;
@@ -907,8 +907,6 @@ HighSpeedResult TryHighSpeedAbInstall(const std::string& package, ZipArchiveHand
 		else if (!skipped_firmware.empty())
 			HsSay("  Firmware: not flashed (" + std::to_string(skipped_firmware.size()) + " skipped)");
 	}
-
-	WarnIfHighSpeedDowngrade(zip);
 
 	// ---- which slot are we allowed to write? -------------------------
 	// the slot recovery booted from is never written. if we can't tell
@@ -1402,6 +1400,8 @@ int TWinstall_zip(const char *path, int *wipe_cache, bool check_for_digest)
 
   time_t start, stop;
   time(&start);
+
+  WarnIfPackageIsOlder(Zip);
 
   std::string update_binary_name(UPDATE_BINARY_NAME);
   ZipEntry64 update_binary_entry;
