@@ -117,6 +117,7 @@ extern "C" {
 #ifdef AB_OTA_UPDATER
 #include <android/hardware/boot/1.0/IBootControl.h>
 using android::hardware::boot::V1_0::CommandResult;
+using android::hardware::boot::V1_0::BoolResult;
 using android::hardware::boot::V1_0::IBootControl;
 #endif
 
@@ -4064,6 +4065,58 @@ string TWPartitionManager::Get_Active_Slot_Suffix() {
 		return "_a";
 	return "_b";
 }
+static std::string DescribeSlotState(bool bootable, bool successful) {
+	if (!bootable)
+		return "Unbootable";
+	return successful ? "Bootable, marked successful" : "Bootable, not yet marked successful";
+}
+
+void TWPartitionManager::Refresh_Slot_Health() {
+	std::string state_a = "Unknown", state_b = "Unknown", booted = "Unknown";
+#ifdef AB_OTA_UPDATER
+	android::sp<IBootControl> module = IBootControl::getService();
+	if (module != nullptr) {
+		uint32_t cur = module->getCurrentSlot();
+		booted = (cur == 0) ? "A" : "B";
+		for (uint32_t slot = 0; slot < 2; slot++) {
+			auto bootable = module->isSlotBootable(slot);
+			auto successful = module->isSlotMarkedSuccessful(slot);
+			std::string& out = (slot == 0) ? state_a : state_b;
+			if (bootable.isOk() && successful.isOk()) {
+				BoolResult is_bootable = bootable;
+				BoolResult is_successful = successful;
+				out = DescribeSlotState(is_bootable == BoolResult::TRUE, is_successful == BoolResult::TRUE);
+			}
+		}
+	} else {
+		LOGERR("Error getting bootctrl module.\n");
+	}
+#endif
+	DataManager::SetValue("tw_slot_a_state", state_a);
+	DataManager::SetValue("tw_slot_b_state", state_b);
+	DataManager::SetValue("tw_slot_booted", booted);
+}
+
+bool TWPartitionManager::Mark_Booted_Slot_Successful() {
+#ifdef AB_OTA_UPDATER
+	android::sp<IBootControl> module = IBootControl::getService();
+	if (module == nullptr) {
+		LOGERR("Error getting bootctrl module.\n");
+		return false;
+	}
+	CommandResult result;
+	auto ret = module->markBootSuccessful([&result](const CommandResult& r) { result = r; });
+	if (!ret.isOk() || !result.success) {
+		LOGERR("markBootSuccessful failed\n");
+		return false;
+	}
+	Refresh_Slot_Health();
+	return true;
+#else
+	return false;
+#endif
+}
+
 string TWPartitionManager::Get_Active_Slot_Display() {
 	return Active_Slot_Display;
 }

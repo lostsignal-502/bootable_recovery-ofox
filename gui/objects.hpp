@@ -438,6 +438,7 @@ protected:
 	int togglebacklight(std::string arg);
 	int twcmd(std::string arg);
 	int setbootslot(std::string arg);
+	int slothealth(std::string arg);
 	int flashlight(std::string arg) { return GUIAction::flashlightImpl(arg); }
 	int fileextension(std::string arg);
 	int up_a_level(std::string arg);

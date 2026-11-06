@@ -1135,6 +1135,14 @@
 
 		<!-- Updated slot selection -->
 		<string name="slot_show">Switch slots</string>
+		<string name="slot_health_btn">Slot health</string>
+		<string name="slot_health_title">Slot health</string>
+		<string name="slot_health_booted">Booted slot: %tw_slot_booted%</string>
+		<string name="slot_health_active">Active slot: %tw_active_slot%</string>
+		<string name="slot_health_a">Slot A: %tw_slot_a_state%</string>
+		<string name="slot_health_b">Slot B: %tw_slot_b_state%</string>
+		<string name="slot_health_refresh">Refresh</string>
+		<string name="slot_health_mark">Mark booted slot successful</string>
 		<string name="slot_switch_a">Switch to slot A</string>
 		<string name="slot_switch_b">Switch to slot B</string>
 		<string name="slot_active_a">Slot A is active</string>

@@ -288,6 +288,7 @@ GUIAction::GUIAction(xml_node <> *node):GUIObject(node)
       ADD_ACTION(flashimage);
       ADD_ACTION(twcmd);
       ADD_ACTION(setbootslot);
+      ADD_ACTION(slothealth);
       ADD_ACTION(repackimage);
       ADD_ACTION(reflashtwrp);
       ADD_ACTION(fixabrecoverybootloop);
@@ -2561,6 +2562,21 @@ int GUIAction::setbootslot(std::string arg)
 			}
 		}
 		PartitionManager.Set_Active_Slot(arg);
+	} else {
+		simulate_progress_bar();
+	}
+	operation_end(0);
+	return 0;
+}
+
+int GUIAction::slothealth(std::string arg)
+{
+	operation_start("Slot Health");
+	if (!simulate) {
+		if (arg == "mark")
+			PartitionManager.Mark_Booted_Slot_Successful();
+		else
+			PartitionManager.Refresh_Slot_Health();
 	} else {
 		simulate_progress_bar();
 	}

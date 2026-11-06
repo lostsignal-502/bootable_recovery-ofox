@@ -656,6 +656,12 @@
 					<action function="set">tw_slider_text={@swipe_to_confirm}</action>
 					<action function="page">confirm_action</action>
 				</listitem>
+				<listitem name="{@slot_health_btn}">
+					<condition var1="tw_has_boot_slots" var2="1"/>
+					<icon res="alpha-a-box-outline"/>
+					<action function="slothealth">refresh</action>
+					<action function="page">slot_health</action>
+				</listitem>
 				<listitem name="{@custom_settings}">
 					<condition var1="fileexists" var2="/sbin/maintainer.xml"/>
 					<icon res="home_repair_service"/>
@@ -684,6 +690,54 @@
 			<action>
 				<touch key="back"/>
 				<action function="page">advanced</action>
+			</action>
+		</page>
+
+		<page name="slot_health">
+			<text style="text_ab_title">
+				<placement x="%col1_x_indent%" y="%ab_bc_y%"/>
+				<text>{@slot_health_title}</text>
+			</text>
+
+			<text style="text_body2_hl">
+				<placement x="%col1_x%" y="%row1_1a_y%"/>
+				<text>{@slot_health_booted}</text>
+			</text>
+			<text style="text_body2_hl">
+				<placement x="%col1_x%" y="%row1_2a_y%"/>
+				<text>{@slot_health_active}</text>
+			</text>
+			<text style="text_body2_hl">
+				<placement x="%col1_x%" y="%row1_3a_y%"/>
+				<text>{@slot_health_a}</text>
+			</text>
+			<text style="text_body2_hl">
+				<placement x="%col1_x%" y="%row1_4a_y%"/>
+				<text>{@slot_health_b}</text>
+			</text>
+
+			<listbox style="group_list">
+				<condition var1="tw_busy" op="!=" var2="1"/>
+				<placement x="0" y="%row_slot_list_y%" w="%screen_w%" h="%files_np_w%"/>
+				<listitem name="{@slot_health_refresh}">
+					<icon res="wrench"/>
+					<action function="slothealth">refresh</action>
+				</listitem>
+				<listitem name="{@slot_health_mark}">
+					<icon res="build"/>
+					<action function="slothealth">mark</action>
+				</listitem>
+			</listbox>
+
+			<template name="gestures"/>
+
+			<action>
+				<touch key="home"/>
+				<action function="page">main</action>
+			</action>
+			<action>
+				<touch key="back"/>
+				<action function="page">fox_other_additions</action>
 			</action>
 		</page>
 

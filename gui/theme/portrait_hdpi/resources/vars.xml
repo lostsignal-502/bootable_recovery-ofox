@@ -599,6 +599,8 @@
 		<variable name="row1_3_y" value="420+%cutout_w%"/>
 		<variable name="row1_3a_y" value="450+%cutout_w%"/>
 		<variable name="row2_1_y" value="480+%cutout_w%"/>
+		<variable name="row1_4a_y" value="510+%cutout_w%"/>
+		<variable name="row_slot_list_y" value="590+%cutout_w%"/>
 		<variable name="row2_1a_y" value="510+%cutout_w%"/>
 		<variable name="row2_2_y" value="540+%cutout_w%"/>
 		<variable name="row2_2a_y" value="570+%cutout_w%"/>

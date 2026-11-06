@@ -432,6 +432,8 @@ public:
 	void Override_Active_Slot(const string& Slot);                            // Override the active slot for repacking
 	void Set_Active_Slot(const string& Slot);                                 // Sets the active slot to A or B
 	string Get_Active_Slot_Suffix();                                          // Returns active slot _a or _b
+	void Refresh_Slot_Health();                                               // Reads boot control state for both slots into tw_slot_* vars
+	bool Mark_Booted_Slot_Successful();                                       // Tells the bootloader the slot recovery booted from is good
 	string Get_Active_Slot_Display();                                         // Returns active slot A or B for display purposes
 	string Get_Android_Root_Path();                                           // Returns path of ANDROID_ROOT environment variable
 	string Get_Internal_Storage_Path();					  // Returns path of EXTERNAL_STORAGE environment variable
