@@ -50,6 +50,7 @@
 #include <linux/fs.h>
 #include <dirent.h>
 #include <algorithm>
+#include <android-base/parseint.h>
 #include <android-base/properties.h>
 #include <update_engine/update_metadata.pb.h>
 
@@ -839,6 +840,27 @@ static void RunPreRomFlashScript(const std::string& package) {
 		PartitionManager.UnMount_By_Path(PartitionManager.Get_Android_Root_Path(), false);
 }
 
+void WarnIfHighSpeedDowngrade(ZipArchiveHandle zip) {
+	std::map<std::string, std::string> metadata;
+	if (!ReadMetadataFromPackage(zip, &metadata))
+		return;
+
+	auto it = metadata.find("post-timestamp");
+	int64_t pkg_ts = 0;
+	if (it == metadata.end() || !android::base::ParseInt(it->second, &pkg_ts))
+		return;
+
+	int64_t booted_ts = 0;
+	if (!android::base::ParseInt(TWFunc::System_Property_Get("ro.build.date.utc"), &booted_ts))
+		return;
+
+	if (pkg_ts >= booted_ts)
+		return;
+
+	HsWarn("  WARNING: this package is older than the booted system (" + std::to_string(pkg_ts) +
+	       " < " + std::to_string(booted_ts) + "). Downgrading can break boot or data.");
+}
+
 HighSpeedResult TryHighSpeedAbInstall(const std::string& package, ZipArchiveHandle zip) {
 	if (!DataManager::GetIntValue("tw_high_speed_flash"))
 		return HighSpeedResult::kNotApplicable;
@@ -885,6 +907,8 @@ HighSpeedResult TryHighSpeedAbInstall(const std::string& package, ZipArchiveHand
 		else if (!skipped_firmware.empty())
 			HsSay("  Firmware: not flashed (" + std::to_string(skipped_firmware.size()) + " skipped)");
 	}
+
+	WarnIfHighSpeedDowngrade(zip);
 
 	// ---- which slot are we allowed to write? -------------------------
 	// the slot recovery booted from is never written. if we can't tell
